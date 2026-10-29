@@ -5,7 +5,7 @@ const PORT = 3000;
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Docker dependency caching works!",
+    message: "Testing GitHub Actions dependency caching!",
   });
 });
 
