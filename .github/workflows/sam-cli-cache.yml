@@ -1,0 +1,39 @@
+name: SAM CLI Cache Test
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache SAM CLI
+        id: cache-sam
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/bin
+            ~/.local/lib/python3.11/site-packages
+          key: sam-cli-${{ runner.os }}-python3.11-v1
+
+      - name: Install SAM CLI
+        run: |
+          if ! command -v sam &> /dev/null; then
+            python -m pip install --user aws-sam-cli
+          fi
+
+      - name: Add SAM CLI to PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Check version and time
+        run: |
+          time sam --version
+          echo "Cache hit: ${{ steps.cache-sam.outputs.cache-hit }}"
