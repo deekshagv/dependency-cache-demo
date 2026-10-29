@@ -21,6 +21,32 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache SAM CLI
+        id: cache-sam
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/bin
+            ~/.local/lib/python3.11/site-packages
+          key: sam-cli-${{ runner.os }}-python3.11-v1
+          restore-keys: |
+            sam-cli-${{ runner.os }}-python3.11-
+
+      - name: Install SAM CLI if cache missed
+        if: steps.cache-sam.outputs.cache-hit != 'true'
+        run: python -m pip install --user aws-sam-cli
+
+      - name: Add local binaries to PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify SAM CLI
+        run: sam --version
+
       - name: Install exact locked dependencies
         run: npm ci
 
