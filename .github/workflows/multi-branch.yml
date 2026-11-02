@@ -1,0 +1,29 @@
+name: Multi-Branch Environment Demo
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+      - prod
+  workflow_dispatch:
+
+jobs:
+  show-environment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Identify branch
+        run: |
+          echo "Current branch: $GITHUB_REF_NAME"
+
+          if [ "$GITHUB_REF_NAME" = "dev" ]; then
+            echo "Environment: Development"
+          elif [ "$GITHUB_REF_NAME" = "staging" ]; then
+            echo "Environment: Staging"
+          elif [ "$GITHUB_REF_NAME" = "prod" ]; then
+            echo "Environment: Production"
+          elif [ "$GITHUB_REF_NAME" = "main" ]; then
+            echo "Environment: Main"
+          fi
